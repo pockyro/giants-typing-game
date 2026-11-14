@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자이언츠 타자연습</title>
+<style>
+:root{--red:#d71920;--ink:#17191f;--muted:#777d89;--line:#e5e7ec;--bg:#f2f3f5}
+*{box-sizing:border-box}
+html{min-width:320px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,"Malgun Gothic",sans-serif;min-height:100vh}
+header{background:#15171c;color:white;padding:22px max(28px,calc((100% - 1480px)/2));border-bottom:5px solid var(--red)}
+.brand{font-size:13px;letter-spacing:2px;color:#ff7378;font-weight:800}
+.head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-top:7px}
+.head h1{font-size:clamp(28px,3vw,40px);margin:0}
+.head p{margin:0 0 5px;color:#c7c9ce;font-size:14px}
+main{width:min(1480px,calc(100% - 56px));margin:26px auto 0;padding:0 0 28px}
+.top{display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:18px}
+select,button{font:inherit;border-radius:10px;border:1px solid var(--line);padding:12px 16px;background:white;color:var(--ink)}
+button{cursor:pointer;font-weight:700}
+button.primary{background:var(--red);border-color:var(--red);color:white}
+button:hover{filter:brightness(.97)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:18px;align-items:start}
+.panel{min-width:0;background:white;border:1px solid var(--line);border-radius:18px;padding:26px;box-shadow:0 5px 20px #18202b08}
+.kicker{font-size:12px;color:var(--red);font-weight:800;letter-spacing:1px}
+.songtitle{font-size:28px;font-weight:800;margin:7px 0 8px}
+#songLink{margin:0 0 18px!important;font-size:14px}
+#songLink a{color:#a90f16;font-weight:700;text-decoration:none}
+#songLink a:hover{text-decoration:underline}
+.target{width:100%;min-height:150px;display:flex;align-content:center;align-items:center;flex-wrap:wrap;gap:0 1px;font-size:clamp(22px,2vw,30px);line-height:1.9;letter-spacing:.2px;padding:24px;background:#f7f7f8;border:1px solid #eff0f2;border-radius:14px;overflow-wrap:anywhere;word-break:keep-all}
+.target span.correct{color:#169b65}
+.target span.wrong{color:#d71920;background:#ffe7e8;border-radius:3px}
+.target span.current{border-bottom:3px solid var(--red)}
+#typing{display:block;width:100%;height:145px;margin-top:16px;resize:vertical;border:1.5px solid #dfe2e8;border-radius:12px;padding:17px;font:20px/1.7 Arial,"Malgun Gothic",sans-serif;outline:none}
+textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px #d7192012}
+.hint{font-size:12px;color:var(--muted);margin:9px 2px 0;line-height:1.6}
+details{margin-top:16px!important;border-top:1px solid var(--line);padding-top:13px}
+details summary{cursor:pointer;font-weight:700;color:#555}
+#lyricsInput{display:block;width:100%;height:110px;resize:vertical;border:1px solid #dfe2e8;border-radius:10px;padding:12px;font:15px/1.6 Arial,"Malgun Gothic",sans-serif}
+#applyLyrics{margin-top:8px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0 12px}
+.stat{background:#f7f7f8;border-radius:12px;padding:15px;min-width:0}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat strong{display:block;font-size:27px;margin-top:5px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.stat strong small{display:inline;font-size:12px}
+.progress{height:9px;background:#eceef2;border-radius:20px;overflow:hidden;margin:16px 0}
+.progress>div{height:100%;width:0;background:var(--red);transition:width .15s}
+.side h3{margin:0 0 14px;font-size:18px}
+.songlist{display:grid;grid-template-columns:1fr;gap:8px}
+.song{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:11px;text-align:left;background:white;line-height:1.35}
+.song.active{border-color:var(--red);background:#fff5f5;color:#b80e15}
+.note{font-size:12px;line-height:1.65;color:var(--muted);margin-top:16px}
+.finish{display:none;margin-top:15px;padding:14px;background:#effaf4;border-radius:12px;color:#147548;font-weight:700}
+footer{text-align:center;color:#969ba5;font-size:12px;margin:20px 0 0}
+@media(min-width:1200px){.side{position:sticky;top:18px}}
+@media(max-width:900px){main{width:min(100% - 32px,760px)}.layout{grid-template-columns:minmax(0,1fr) 270px}.panel{padding:20px}.song{font-size:13px}}
+@media(max-width:680px){header{padding:20px 18px}.head{align-items:flex-start;flex-direction:column;gap:5px}.head p{margin:0}main{width:calc(100% - 28px);margin-top:18px}.layout{grid-template-columns:1fr}.side{position:static;order:-1}.songlist{grid-template-columns:1fr 1fr}.panel{padding:17px}.target{font-size:21px;min-height:120px;padding:16px}#typing{height:125px;font-size:17px}.songtitle{font-size:24px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">GIANTS • TYPING PRACTICE</div>
+  <div class="head"><h1>자이언츠 타자연습</h1><p>응원 리듬에 맞춰 정확하게 타이핑!</p></div>
+</header>
+<main>
+  <div class="top">
+    <div><span class="kicker">LOTTE GIANTS</span><div style="font-size:14px;color:#777d89;margin-top:4px">롯데 응원 분위기로 즐기는 타자 연습</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><select id="mode" aria-label="연습 모드"><option value="normal">일반 연습</option><option value="challenge">도전 모드 · 60초</option></select><button class="primary" id="reset">처음부터</button></div>
+  </div>
+  <div class="layout">
+    <section class="panel">
+      <div class="kicker">NOW PLAYING</div>
+      <div class="songtitle" id="songTitle">부산갈매기</div>
+      <div id="songLink" style="margin:-7px 0 16px"><a id="youtubeLink" href="https://youtu.be/_c0_FXVQD_A" target="_blank" rel="noopener">▶ 유튜브에서 부산갈매기 듣기</a></div>
+      <div class="target" id="target" aria-label="따라 입력할 문장"></div>
+      <details style="margin-top:15px">
+        <summary style="cursor:pointer;font-weight:700;color:#555">내가 준비한 가사 붙여넣기</summary>
+        <p class="hint">직접 준비한 가사를 붙여넣고 적용하면 줄 단위 타자연습으로 바뀝니다.</p>
+        <textarea id="lyricsInput" style="height:105px;margin-top:8px" placeholder="연습할 가사를 줄마다 붙여넣으세요."></textarea>
+        <button type="button" id="applyLyrics" class="primary" style="margin-top:8px">가사 적용</button>
+      </details>
+      <textarea id="typing" placeholder="위 문장을 여기에 입력하세요." spellcheck="false" autocomplete="off"></textarea>
+      <div class="hint">문장을 그대로 입력하면 다음 문장으로 넘어갑니다. 띄어쓰기와 문장부호도 정확히 입력해 보세요.</div>
+      <div class="finish" id="finish"></div>
+    </section>
+    <aside class="panel side">
+      <h3>연습곡 선택</h3>
+      <div class="songlist" id="songList"></div>
+      <div class="progress"><div id="bar"></div></div>
+      <div class="stats">
+        <div class="stat"><small>타자 속도</small><strong><span id="wpm">0</span><small style="display:inline"> 타/분</small></strong></div>
+        <div class="stat"><small>정확도</small><strong><span id="accuracy">100</span><small style="display:inline">%</small></strong></div>
+        <div class="stat"><small>완료 문장</small><strong id="done">0</strong></div>
+        <div class="stat"><small>남은 시간</small><strong id="time">—</strong></div>
+      </div>
+      <div class="note">※ 사용자가 제공한 가사를 반영했습니다. 음원은 유튜브에서 별도로 열립니다.</div>
+    </aside>
+  </div>
+  <footer>GO GIANTS! · 나만의 응원 타자 연습</footer>
+</main>
+<script>
+const tracks=[
+ {name:"부산갈매기",url:"https://youtu.be/_c0_FXVQD_A",lines:[
+  "지금은 그 어디서 내 생각 잊었는가",
+  "꽃처럼 어여쁜 그 이름도 고왔던 순이 순이야",
+  "파도치는 부둣가에 지나간 일들이 가슴에 남았는데",
+  "부산 갈매기 부산 갈매기 너는 정녕 나를 잊었나",
+  "지금은 그 어디서 내 모습 잊었는가",
+  "꽃처럼 어여쁜 그 이름도 고왔던 순이 순이야",
+  "그리움이 물결치며 오늘도 못잊어 네 이름 부르는데",
+  "부산 갈매기 부산 갈매기 너는 벌써 나를 잊었나"
+ ]},
+ {name:"영원하라",url:"https://youtu.be/5sKTtDN9wak",lines:[
+  "자~ 롯데의 승리 위해",
+  "소리 높여 외쳐보자",
+  "최~강 롯데 자이언츠",
+  "최~강 롯데 자이언츠",
+  "아~ 롯데는 승리한다",
+  "최!강!롯!데!",
+  "최~강 롯데 자이언츠",
+  "최~강 롯데 자이언츠",
+  "아~ 롯데는 승리하리라~",
+  "(간주)",
+  "자~ 롯데의 승리 위해",
+  "소리 높여 외쳐보자",
+  "최~강 롯데 자이언츠",
+  "최~강 롯데 자이언츠",
+  "아 롯데는 승리한다",
+  "최!강!롯!데!",
+  "최~강 롯데 자이언츠",
+  "최~강 롯데 자이언츠",
+  "아~ 롯데는 승리하리라~"
+ ]},
+ {name:"윤동희 응원가",url:"https://youtu.be/aeiBvXqlhng",lines:[
+  "롯데의 (Hey!) 윤동희~",
+  "쌔리라 안타 쌔리라~",
+  "최강롯데 자이언츠 윤동희~",
+  "(안타!)",
+  "윤동희 응원가"
+ ]},
+ {name:"황성빈 응원가 (Who Let the Dogs Out)",url:"https://youtu.be/hz8J_T86xVc",lines:[
+  "Who let the dogs out",
+  "Woof, woof, woof",
+  "Woof, woof, woof",
+  "Woof, woof, woof",
+  "Woof, woof, woof",
+  "오 롯데의 황성빈 오오오",
+  "안타 안타 롯데 황성빈",
+  "황 성 빈",
+  "오 롯데의 황성빈 오오오",
+  "안타 안타 롯데 황성빈",
+  "황 성 빈"
+ ]}
+]
+let trackIndex=0,lineIndex=0,startedAt=null,timer=null,challenge=false,deadline=null;
+let totalKeystrokes=0,completedTyped=0,completedCorrect=0,currentTyped=0,currentCorrect=0,finished=false;
+const $=id=>document.getElementById(id);
+function renderList(){ $("songList").innerHTML="";tracks.forEach((t,i)=>{const b=document.createElement("button");b.className="song"+(i===trackIndex?" active":"");b.textContent=(i+1)+". "+t.name;b.onclick=()=>selectTrack(i);$("songList").appendChild(b)})}
+function selectTrack(i){trackIndex=i;lineIndex=0;resetStats();render()}
+function resetStats(){startedAt=null;totalKeystrokes=0;completedTyped=0;completedCorrect=0;currentTyped=0;currentCorrect=0;finished=false;clearInterval(timer);timer=null;challenge=$("mode").value==="challenge";deadline=null;$("typing").value="";$("finish").style.display="none";$("wpm").textContent="0";$("accuracy").textContent="100"}
+function render(){const t=tracks[trackIndex];$("songTitle").textContent=t.name;$("youtubeLink").href=t.url;$("youtubeLink").textContent="▶ 유튜브에서 "+t.name+" 듣기";$("typing").disabled=false;$("typing").value="";$("typing").focus();$("time").textContent=challenge?"60":"—";$("done").textContent=lineIndex;$("bar").style.width=(t.lines.length?lineIndex/t.lines.length*100:0)+"%";renderList();drawTarget()}
+function drawTarget(){const text=tracks[trackIndex].lines[lineIndex]||"가사를 직접 붙여넣고 ‘가사 적용’을 눌러주세요.";const input=$("typing").value;let html="";for(let i=0;i<text.length;i++){let cls=i<input.length?(input[i]===text[i]?"correct":"wrong"):"";if(i===input.length)cls+=" current";html+=`<span class="${cls.trim()}">${text[i]===" "?"&nbsp;":escapeHtml(text[i])}</span>`}$("target").innerHTML=html}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function begin(){if(startedAt!==null)return;startedAt=Date.now();if(challenge){deadline=Date.now()+60000;timer=setInterval(()=>{let left=Math.max(0,Math.ceil((deadline-Date.now())/1000));$("time").textContent=left;if(left<=0)endGame()},200)}else{timer=setInterval(updateStats,500)}}
+function updateStats(){
+  const elapsed=startedAt?(Date.now()-startedAt)/60000:0;
+  // 타수는 한글 IME 입력 중 실제 키보드에서 눌린 글자 키 수를 기준으로 계산합니다.
+  $("wpm").textContent=elapsed>0?Math.round(totalKeystrokes/elapsed):0;
+  const typed=completedTyped+currentTyped,correct=completedCorrect+currentCorrect;
+  $("accuracy").textContent=typed?Math.round(correct/typed*100):100;
+}
+// 한글은 한 글자를 만들 때 여러 자판 입력이 필요하므로 글자 수가 아닌 실제 키 입력을 셉니다.
+$("typing").addEventListener("keydown",e=>{
+  if(finished||e.repeat||e.ctrlKey||e.metaKey||e.altKey)return;
+  const printable=/^(Key[A-Z]|Digit[0-9]|Numpad[0-9]|Space|Minus|Equal|BracketLeft|BracketRight|Backslash|Semicolon|Quote|Backquote|Comma|Period|Slash)$/;
+  if(printable.test(e.code)){begin();totalKeystrokes++;updateStats()}
+});
+$("typing").addEventListener("input",()=>{
+  if(finished)return;
+  begin();
+  const target=tracks[trackIndex].lines[lineIndex],value=$("typing").value;
+  let correct=0;
+  for(let i=0;i<value.length;i++)if(value[i]===target[i])correct++;
+  currentTyped=value.length;currentCorrect=correct;
+  drawTarget();updateStats();
+  if(value===target){
+    completedTyped+=target.length;completedCorrect+=target.length;
+    currentTyped=0;currentCorrect=0;
+    lineIndex++;$("done").textContent=lineIndex;
+    $("bar").style.width=(lineIndex/tracks[trackIndex].lines.length*100)+"%";
+    if(lineIndex>=tracks[trackIndex].lines.length){
+      if(trackIndex<tracks.length-1){trackIndex++;lineIndex=0;render()}else endGame()
+    }else{$("typing").value="";drawTarget()}
+  }
+});
+function endGame(){finished=true;clearInterval(timer);updateStats();$("typing").disabled=true;$("finish").style.display="block";$("finish").textContent=`연습 완료! 정확도 ${$("accuracy").textContent}% · 타자 속도 ${$("wpm").textContent}타/분`;$("time").textContent=challenge?"종료":"완료"}
+$("applyLyrics").onclick=()=>{const lines=$("lyricsInput").value.split(/\\r?\\n/).map(s=>s.trim()).filter(Boolean);if(!lines.length){alert("먼저 연습할 가사를 붙여넣어 주세요.");return;}tracks[trackIndex].lines=lines;lineIndex=0;resetStats();render();};
+$("reset").onclick=()=>{lineIndex=0;resetStats();render()};$("mode").onchange=()=>{$("reset").click()};
+render();
+</script>
+</body>
+</html>
